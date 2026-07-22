@@ -33,3 +33,8 @@ pio run -t upload
 
 - Partition layout is set to `huge_app.csv` so this Sky Gauge build fits on ESP32.
 - LVGL memory and draw buffers were reduced for non-PSRAM ESP32 hardware.
+
+## Documentation
+
+- Setup guide: `docs/SETUP.md`
+- Release notes: `docs/RELEASE_NOTES_v0.5.md`
