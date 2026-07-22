@@ -18,7 +18,7 @@
     haUrl: $('haUrl'), haToken: $('haToken'), haPoll: $('haPoll'),
     haTiles: $('haTiles'), haAddBtn: $('haAddBtn'),
     haSaveBtn: $('haSaveBtn'), haStatus: $('haStatus'),
-    ssid: $('ssid'), password: $('password'), hostname: $('hostname'),
+    ssid: $('ssid'), password: $('password'), hostname: $('hostname'), timezone: $('timezone'),
     wifiSaveBtn: $('wifiSaveBtn'), wifiStatus: $('wifiStatus'),
     rebootBtn: $('rebootBtn'), resetBtn: $('resetBtn'),
     shotBtn: $('shotBtn'), shotStatus: $('shotStatus'),
@@ -123,6 +123,19 @@
     ws.send(JSON.stringify({ type: 'config', patch }));
   }
 
+  async function sendConfigHttp(patch) {
+    try {
+      const res = await fetch('/api/state', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
   // ── State sync ────────────────────────────────────────────────────────────
   function applyState(s) {
     suppressSend = true;
@@ -163,6 +176,7 @@
 
     el.ssid.value     = s.wifi?.ssid     ?? '';
     el.hostname.value = s.wifi?.hostname ?? '';
+    el.timezone.value = s.wifi?.tz ?? 'UTC0';
     el.password.placeholder = (s.wifi?.password || '') ? '(leave blank to keep)' : '';
 
     el.hostFooter.textContent = (s.wifi?.hostname || 'esp-gauge') + '.local';
@@ -245,6 +259,16 @@
     });
 
     // WiFi: explicit save (it needs a reboot, so no live auto-commit).
+    el.timezone.addEventListener('change', async () => {
+      const patch = { wifi: { tz: el.timezone.value } };
+      // Try WS first for immediate UI/state sync, but always persist via HTTP
+      // as a fallback path.
+      sendConfig(patch);
+      const ok = await sendConfigHttp(patch);
+      el.wifiStatus.textContent = ok ? 'Timezone saved.' : 'Timezone save failed.';
+      setTimeout(() => { el.wifiStatus.textContent = ''; }, 2500);
+    });
+
     el.wifiSaveBtn.addEventListener('click', () => {
       const ssid = el.ssid.value.trim();
       if (!ssid) {
@@ -255,6 +279,7 @@
       const patch = { wifi: { ssid } };
       if (el.password.value) patch.wifi.password = el.password.value;
       if (el.hostname.value.trim()) patch.wifi.hostname = el.hostname.value.trim();
+      patch.wifi.tz = el.timezone.value;
 
       sendConfig(patch);
       el.wifiStatus.textContent = `Saved. Rebooting to join "${ssid}"…`;

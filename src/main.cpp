@@ -5,6 +5,8 @@
 #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
 #include <SPI.h>
+#include <time.h>
+#include <stdlib.h>
 #include <WiFiManager.h>
 #include <XPT2046_Touchscreen.h>
 
@@ -184,6 +186,12 @@ void connect_or_ap() {
     if (connected && MDNS.begin(s.hostname)) {
         MDNS.addService("http", "tcp", 80);
         log_i("mDNS as %s.local", s.hostname);
+    }
+
+    if (connected) {
+        // Start SNTP with the selected POSIX TZ so localtime() tracks
+        // timezone and DST rules correctly.
+        configTzTime(settings::state().timezone, "pool.ntp.org", "time.nist.gov");
     }
 }
 

@@ -10,6 +10,9 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncJson.h>
 #include <ArduinoJson.h>
+#include <WiFi.h>
+#include <time.h>
+#include <stdlib.h>
 
 namespace web {
 namespace {
@@ -64,11 +67,23 @@ void broadcast_all_state_inline() {
 // screen rebuild — they'd reset animation state 30×/second for no visual
 // difference, since brightness is pure backlight PWM.
 void apply_config_patch(JsonVariantConst patch) {
+    char old_tz[sizeof(settings::state().timezone)];
+    strlcpy(old_tz, settings::state().timezone, sizeof(old_tz));
+
     if (!settings::apply_json(patch)) return;
 
     save_pending = true;
     save_request_ms = millis();
     display::set_brightness(settings::state().brightness);
+
+    // Apply timezone changes immediately so the on-screen clock updates
+    // without waiting for a reboot.
+    if (strcmp(old_tz, settings::state().timezone) != 0) {
+        if (WiFi.status() == WL_CONNECTED) {
+            configTzTime(settings::state().timezone,
+                         "pool.ntp.org", "time.nist.gov");
+        }
+    }
 
     JsonObjectConst o = patch.as<JsonObjectConst>();
     bool only_brightness = o.size() == 1 && !o["brightness"].isNull();

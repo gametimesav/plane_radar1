@@ -58,6 +58,7 @@ struct Snapshot {
     char     wifi_ssid[33]    = "";
     char     wifi_password[65]= "";
     char     hostname[33]     = "esp-gauge";
+    char     timezone[48]     = "UTC0";
 
     // display
     Mode     mode             = Mode::Radar;
@@ -79,7 +80,7 @@ Snapshot& state();
 // Recognized keys: mode, brightness,
 //                  radar.{lat,lon,range_km,poll_s,show_tags,theme,alert_km,auto_km},
 //                  home.{url,token,poll_s,tiles:[{icon,label,entity}]},
-//                  wifi.{ssid,password,hostname}.
+//                  wifi.{ssid,password,hostname,tz}.
 bool apply_json(JsonVariantConst patch);
 
 // Serialize current state into the given JSON object (passwords redacted by

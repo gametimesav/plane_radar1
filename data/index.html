@@ -124,6 +124,28 @@
   </section>
 
   <section class="card">
+    <h2>Time</h2>
+    <div class="grid2">
+      <label>Time zone
+        <select id="timezone">
+          <option value="HST10">Hawaii (HST)</option>
+          <option value="AKST9AKDT,M3.2.0/2,M11.1.0/2">Alaska (AKST/AKDT)</option>
+          <option value="PST8PDT,M3.2.0/2,M11.1.0/2">Pacific (PST/PDT)</option>
+          <option value="MST7">Mountain - Arizona (MST)</option>
+          <option value="MST7MDT,M3.2.0/2,M11.1.0/2">Mountain (MST/MDT)</option>
+          <option value="CST6">Central - Saskatchewan (CST)</option>
+          <option value="CST6CDT,M3.2.0/2,M11.1.0/2">Central (CST/CDT)</option>
+          <option value="EST5EDT,M3.2.0/2,M11.1.0/2">Eastern (EST/EDT)</option>
+          <option value="AST4ADT,M3.2.0/2,M11.1.0/2">Atlantic (AST/ADT)</option>
+          <option value="NST3:30NDT,M3.2.0/2,M11.1.0/2">Newfoundland (NST/NDT)</option>
+          <option value="UTC0">UTC</option>
+        </select>
+      </label>
+    </div>
+    <p class="hint">Changing this updates the device clock timezone immediately.</p>
+  </section>
+
+  <section class="card">
     <h2>Network</h2>
     <div class="grid2">
       <label>SSID     <input type="text"     id="ssid"     placeholder="MyNetwork" autocomplete="off"></label>

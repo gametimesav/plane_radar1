@@ -36,6 +36,7 @@ void begin() {
     load_string("ssid", snap.wifi_ssid, sizeof(snap.wifi_ssid));
     load_string("pwd",  snap.wifi_password, sizeof(snap.wifi_password));
     load_string("host", snap.hostname, sizeof(snap.hostname));
+    load_string("tz",   snap.timezone, sizeof(snap.timezone));
 
     uint8_t mode_u8 = static_cast<uint8_t>(snap.mode);
     load_scalar("mode", mode_u8);
@@ -69,6 +70,7 @@ void save() {
     prefs.putString("ssid", snap.wifi_ssid);
     prefs.putString("pwd",  snap.wifi_password);
     prefs.putString("host", snap.hostname);
+    prefs.putString("tz",   snap.timezone);
 
     prefs.putUChar("mode", static_cast<uint8_t>(snap.mode));
     prefs.putUChar("bri",  snap.brightness);
@@ -186,6 +188,7 @@ bool apply_json(JsonVariantConst patch) {
         changed |= maybe_set_str(w["ssid"],     snap.wifi_ssid,     sizeof(snap.wifi_ssid));
         changed |= maybe_set_str(w["password"], snap.wifi_password, sizeof(snap.wifi_password));
         changed |= maybe_set_str(w["hostname"], snap.hostname,      sizeof(snap.hostname));
+        changed |= maybe_set_str(w["tz"],       snap.timezone,      sizeof(snap.timezone));
     }
 
     return changed;
@@ -223,6 +226,7 @@ void to_json(JsonObject out, bool include_secrets) {
     w["ssid"]     = snap.wifi_ssid;
     w["password"] = include_secrets ? snap.wifi_password : (strlen(snap.wifi_password) ? "********" : "");
     w["hostname"] = snap.hostname;
+    w["tz"]       = snap.timezone;
 }
 
 }  // namespace settings
