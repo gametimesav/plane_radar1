@@ -270,10 +270,14 @@ void update_tap_info_panel() {
     char b1[24], b2[24], b3[24], b4[24], b5[24];
     snprintf(b1, sizeof(b1), "%s", a.callsign[0] ? a.callsign : "(unknown)");
     snprintf(b2, sizeof(b2), "%s", a.route[0] ? a.route : "route n/a");
-    if (a.on_ground) snprintf(b3, sizeof(b3), "GROUND %.1fkm", rd_live_dist[rd_selected_ix]);
-    else snprintf(b3, sizeof(b3), "%ldft %dkt", (long)a.alt_ft, (int)a.gs_kt);
-    snprintf(b4, sizeof(b4), "TYPE %s", a.type[0] ? a.type : "N/A");
-    snprintf(b5, sizeof(b5), "TOTAL %u", (unsigned)radar::total_in_range());
+    if (a.on_ground) {
+        snprintf(b3, sizeof(b3), "ALT GROUND");
+        snprintf(b4, sizeof(b4), "SPD 0kt");
+    } else {
+        snprintf(b3, sizeof(b3), "ALT %ldft", (long)a.alt_ft);
+        snprintf(b4, sizeof(b4), "SPD %dkt", (int)a.gs_kt);
+    }
+    snprintf(b5, sizeof(b5), "TYPE %s", a.type[0] ? a.type : "N/A");
     set_text_if_changed(rd_info_1, b1);
     set_text_if_changed(rd_info_2, b2);
     set_text_if_changed(rd_info_3, b3);
